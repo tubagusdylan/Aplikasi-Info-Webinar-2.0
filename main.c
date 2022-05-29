@@ -1,8 +1,36 @@
 #include "webinarFunction.h"
 
+void insertRoot(struct search **root, char firstChar, struct node *temps){
+	if(*root == NULL){
+		*root = (struct search *) malloc(sizeof(struct search));
+
+		if(*root != NULL){
+			(*root)->hurufPertama = firstChar;
+			(*root)->id = temps->id;
+			(*root)->left = NULL;
+			(*root)->right = NULL;
+		} else {
+			printf("%c gagal ditambah", firstChar);
+		}
+	} else {
+		if(firstChar < (*root)->hurufPertama){
+			insertRoot(&(*root)->left, firstChar, temps);
+		} else if(firstChar > (*root)->hurufPertama){
+			insertRoot(&(*root)->right, firstChar, temps);
+		}
+	}
+}
+
+void inOrder(struct search **root){
+	if(*root != NULL){
+		inOrder(&(*root)->left);
+		printf("id: %d, %c\n", (*root)->id ,(*root)->hurufPertama);
+		inOrder(&(*root)->right);
+	}
+}
+
 
 int main(){
-
     // Animasi Pembukaan program
 	system ("COLOR 70");
 	
@@ -63,6 +91,7 @@ int main(){
 	struct node * temp; 
 	struct node * current;
 
+	//node pertama
     temp = (struct node *)malloc(sizeof(struct node)); 
 	temp->id = 1;
 	strcpy (temp->judulWebinar, "Globalisasi");
@@ -73,10 +102,10 @@ int main(){
 	temp->link = start; 
 	start = temp;
 	
-	
+	//node kedua
 	temp = malloc(sizeof(struct node)); 
 	temp->id = 2;
-	strcpy (temp->judulWebinar, "Internet of Things");
+	strcpy (temp->judulWebinar, "Aku Manusia Biasa");
 	strcpy (temp->tanggalPelaksanaan, "25 Mei 2022");
 	strcpy (temp->hargaWebinar, "Gratis");
 	temp->kuotaWebinar = 50;
@@ -88,7 +117,7 @@ int main(){
 	current->link = temp;
 	temp->link = NULL;
 
-	
+	//node ketiga
 	temp = malloc(sizeof(struct node)); 
 	temp->id = 3;
 	strcpy (temp->judulWebinar, "Manusia Makhluk Sempurna");
@@ -103,7 +132,7 @@ int main(){
 	current->link = temp;
 	temp->link = NULL;
 	
-	
+	//node keempat
 	temp = malloc(sizeof(struct node)); 
 	temp->id = 4;
 	strcpy (temp->judulWebinar, "Indonesia Merdeka");
@@ -118,7 +147,7 @@ int main(){
 	current->link = temp;
 	temp->link = NULL;
 	
-	
+	//node kelima
 	temp = malloc(sizeof(struct node)); 
 	temp->id = 5;
 	strcpy (temp->judulWebinar, "Cara Investasi ala Warren Buffet");
@@ -132,12 +161,27 @@ int main(){
 	}
 	current->link = temp;
 	temp->link = NULL;
+	
+	// binary tree dari sebuah link list
+	struct search *root = NULL;
+	struct node *temps;
+	char firstChar;
+
+	temps = start;
+	while (temps != NULL){
+		firstChar = temps->judulWebinar[0];
+		insertRoot(&root, firstChar, temps);
+		temps = temps->link;
+	}
+	
+	
 
     // Program Start Menu
     do{   
         do{
         	system("cls"); 
         	printf("Selamat Datang di Aplikasi Info Webinar\n\n");
+
         	printf("=== Start Menu ===\n");
         	printf ("1. Admin\n");
         	printf ("2. Guest\n");
@@ -160,16 +204,16 @@ int main(){
             adminMenu(start);
             break;
         case 2:
-            guestMenu(start);
+            guestMenu(start, &root);
             break;
         case 3: 
-            //panduanStartMenu();
+            panduanStartMenu();
             fflush(stdin);
             printf("Tekan Enter untuk kembali...");
             getchar();
             break;
         case 4 : 
-        	//anggotaKelompok();
+        	anggotaKelompok();
         	fflush(stdin);
             printf("\n\nTekan Enter untuk kembali...");
             getchar();
