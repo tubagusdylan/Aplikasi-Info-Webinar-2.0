@@ -32,6 +32,13 @@ struct Node{
 struct Node *head = NULL;
 struct Node *last = NULL;
 
+struct search{
+	char hurufPertama;
+	int id;
+	struct search *left;
+	struct search *right;
+};
+
 int batas = 5;
 const int atSymbol = 64, BACKSPACE = 8, CARRIAGE_RETURN = 13;
 
@@ -683,13 +690,44 @@ void panduanGuestMenu(){
 }
 // akhir dari program panduan
 
+
+//program search dengan algoritma binary search tree
+void searchWebinar(struct search **root, struct node *start, char firstChar){
+
+	struct node *temp;
+	temp = start;
+
+	if(*root != NULL){
+		if(firstChar < (*root)->hurufPertama){
+			searchWebinar(&(*root)->left, start, firstChar);
+		} else if( firstChar > (*root)->hurufPertama){
+			searchWebinar(&(*root)->right, start, firstChar);
+		} else {
+			printf("Judul ditemukan...\n\n");
+			printf("Berikut judul webinar yang Anda cari: \n");
+			while(temp != NULL){
+				if((*root)->id == temp->id){
+					printf("%d. %s", temp->id, temp->judulWebinar);
+				}
+				temp = temp->link;
+			}
+		}
+	} else {
+		printf("Judul tidak ditemukan...\n");
+	}
+	
+}
+// akhir dari program search
+
 // awal dari menu guest
-void guestMenu(struct node *start) {
+void guestMenu(struct node *start, struct search **root) {
 
 	int i;
     int opt;
 	int perulangan = 1;
 	char kembali;
+	char firstChar, lanjut;
+	int flag = 0;
 	
 	system ("cls");
 	printf ("\t\t\t\t\t");
@@ -789,7 +827,38 @@ void guestMenu(struct node *start) {
 	        break;
 	        
 	    case 3:
-	        // searchWebinar(judulWebinar);
+			system("cls");
+			printf("====== Search ======\n\n");
+			do
+			{
+				do
+				{
+					printf("\nMasukkan huruf pertama dari webinar yang ingin Anda cari: ");
+					fflush(stdin);
+					scanf("%c", &firstChar);
+
+					if(firstChar < 'A' || firstChar > 'Z'){
+						printf("Tolong masukkan huruf kapital!\n");
+						flag = 1;
+					} else {
+						flag = 0;
+					}
+				} while (flag);
+				
+				
+				searchWebinar(root, start, firstChar);
+
+				printf("\nIngin mencari lagi? [y/n]: ");
+				fflush(stdin);
+				scanf("%c", &lanjut);
+
+				if(lanjut == 'y' || lanjut == 'Y'){
+					flag = 1;
+				} else {
+					flag = 0;
+				}
+			} while (flag);
+
 	        printf ("\nApakah Anda ingin kembali ke Guest Menu [y/n] ? ");
 			fflush(stdin);
 			kembali = getchar();
